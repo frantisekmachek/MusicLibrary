@@ -1,11 +1,13 @@
 package MusicClasses;
 
 import java.util.ArrayList;
+import java.util.Collections;
 
 public class SongList {
     private String title;
     private ArrayList<Song> songs = new ArrayList<>();
 
+    //region Getters and setters
     /**
      * Returns the song list title.
      * @return the song list title
@@ -29,6 +31,7 @@ public class SongList {
     public ArrayList<Song> getSongs() {
         return songs;
     }
+    //endregion
 
     /**
      * A SongList constructor.
@@ -66,4 +69,10 @@ public class SongList {
         }
     }
 
+    /**
+     * Shuffles the song list.
+     */
+    public void shuffle() {
+        Collections.shuffle(songs);
+    }
 }

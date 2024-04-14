@@ -3,6 +3,7 @@ package MusicClasses;
 import UtilityClasses.FileLoader;
 import java.io.File;
 import java.time.Duration;
+import java.util.Objects;
 
 public class Song {
     private String title;
@@ -10,8 +11,42 @@ public class Song {
     private String filePath;
     private Duration duration;
 
+    //region Getters and setters
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getArtist() {
+        return artist;
+    }
+
+    public void setArtist(String artist) {
+        this.artist = artist;
+    }
+
+    public String getFilePath() {
+        return filePath;
+    }
+
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    public Duration getDuration() {
+        return duration;
+    }
+
+    public void setDuration(Duration duration) {
+        this.duration = duration;
+    }
+    //endregion
+
     /**
-     * A private constructor which prevents normal instance creation (must be created via 'create' method).
+     * A private constructor which prevents normal instance creation (must be created via the 'create' method).
      * @param title the song title
      * @param artist the artist name
      * @param filePath the file path
@@ -28,13 +63,14 @@ public class Song {
      * @param artist the artist name
      * @param filePath the file path
      * @return the new Song instance
+     * @throws Exception
      */
-    public static Song create(String title, String artist, String filePath) {
+    public static Song create(String title, String artist, String filePath) throws Exception {
         boolean isValid = isFileValid(filePath);
         if(!isValid) {
             String print = String.format("Song with title %s wasn't created, because the file isn't valid.");
             System.out.println(print);
-            return null;
+            throw new Exception("The file provided is not a sound file.");
         }
         return new Song(title, artist, filePath);
     }
@@ -55,4 +91,16 @@ public class Song {
         return FileLoader.isSoundFile(filePath);
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Song song = (Song) o;
+        return Objects.equals(filePath, song.filePath);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(filePath);
+    }
 }

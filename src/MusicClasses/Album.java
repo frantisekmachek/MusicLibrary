@@ -1,21 +1,12 @@
 package MusicClasses;
 
-import java.awt.*;
+import javax.swing.*;
 
 public class Album extends SongList {
     private String artist;
-    private Image cover;
+    private ImageIcon cover;
 
-    /**
-     * An Album constructor.
-     *
-     * @param title the title of the album
-     */
-    public Album(String title, String artist) {
-        super(title);
-        this.artist = artist;
-    }
-
+    //region Getters and setters
     /**
      * Sets the artist name.
      * @param artist the artist name
@@ -36,7 +27,7 @@ public class Album extends SongList {
      * Sets the cover of the album.
      * @param cover the new album cover
      */
-    public void setCover(Image cover) {
+    public void setCover(ImageIcon cover) {
         this.cover = cover;
     }
 
@@ -44,7 +35,18 @@ public class Album extends SongList {
      * Returns the album cover.
      * @return the album cover
      */
-    public Image getCover() {
+    public ImageIcon getCover() {
         return cover;
+    }
+    //endregion
+
+    /**
+     * An Album constructor.
+     *
+     * @param title the title of the album
+     */
+    public Album(String title, String artist) {
+        super(title);
+        this.artist = artist;
     }
 }
