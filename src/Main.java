@@ -1,5 +1,8 @@
+import UtilityClasses.FileLoader;
+
 public class Main {
     public static void main(String[] args) {
-        System.out.println("Hello world! Nothing here yet!");
+        // Initialize the resource folder if it doesn't exist
+        FileLoader.createResourceDirectory();
     }
 }

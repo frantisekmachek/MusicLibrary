@@ -8,10 +8,19 @@ import java.util.Objects;
 public class Song {
     private String title;
     private String artist;
+    private Album album;
     private String filePath;
     private Duration duration;
 
     //region Getters and setters
+    public Album getAlbum() {
+        return album;
+    }
+
+    public void setAlbum(Album album) {
+        this.album = album;
+    }
+
     public String getTitle() {
         return title;
     }
@@ -63,7 +72,7 @@ public class Song {
      * @param artist the artist name
      * @param filePath the file path
      * @return the new Song instance
-     * @throws Exception
+     * @throws Exception wrong file provided
      */
     public static Song create(String title, String artist, String filePath) throws Exception {
         boolean isValid = isFileValid(filePath);

@@ -110,4 +110,47 @@ public class FileLoader {
             throw new FileNotFoundException("File not found.");
         }
     }
+
+    /**
+     * Creates the 'res' directory along with all of its subdirectories.
+     */
+    public static void createResourceDirectory() {
+        String resPath = "res";
+        File res = new File(resPath);
+
+        if(!res.exists()) {
+            res.mkdirs();
+        }
+
+        // Define subdirectory paths
+        String songPath = "res\\songs";
+        String coverPath = "res\\covers";
+        String albumPath = "res\\albums";
+        String playlistPath = "res\\playlists";
+
+        // Make sure that all subdirectories exist
+        if(res.exists()) {
+            createFolder(songPath);
+            createFolder(coverPath);
+            createFolder(albumPath);
+            createFolder(playlistPath);
+        }
+
+        createFolder(songPath + "\\songdata"); // Also create the songdata folder if it doesn't exist
+    }
+
+    /**
+     * Tries to find a folder (File) at a given file path and if it doesn't exist, it is created.
+     * @param path the folder path
+     * @return true if the folder was created, false otherwise
+     */
+    public static boolean createFolder(String path) {
+        File folder = new File(path);
+        if(!folder.exists()) { // If the folder doesn't exist, try creating it and return true/false
+            return folder.mkdirs();
+        } else {
+            return false;
+        }
+    }
+
 }
