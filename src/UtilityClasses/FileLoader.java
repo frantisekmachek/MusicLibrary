@@ -1,5 +1,7 @@
 package UtilityClasses;
 
+import javax.sound.sampled.AudioInputStream;
+import javax.sound.sampled.AudioSystem;
 import javax.swing.*;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -61,6 +63,17 @@ public class FileLoader {
             return image;
         } else {
             throw new Exception("The file provided is not an image file.");
+        }
+    }
+
+    public static AudioInputStream loadSoundFromFile(String filePath) throws Exception {
+        boolean soundExists = isSoundFile(filePath);
+        if(soundExists) {
+            File soundFile = new File(filePath);
+            AudioInputStream audioInput = AudioSystem.getAudioInputStream(soundFile);
+            return audioInput;
+        } else {
+            throw new Exception("The file provided is not a sound file.");
         }
     }
 
