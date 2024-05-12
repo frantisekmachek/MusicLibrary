@@ -166,4 +166,18 @@ public class FileLoader {
         }
     }
 
+    /**
+     * Checks if a file exists at a given file path. It excludes directories.
+     * @param filePath the file path
+     * @return true if the file exists, false otherwise (or if it's a directory)
+     */
+    public static boolean fileExists(String filePath) {
+        File file = new File(filePath);
+        if(file.exists()) {
+            return !file.isDirectory();
+        } else {
+            return false;
+        }
+    }
+
 }

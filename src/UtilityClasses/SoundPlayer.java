@@ -1,9 +1,6 @@
 package UtilityClasses;
 
-import javax.sound.sampled.AudioInputStream;
-import javax.sound.sampled.AudioSystem;
-import javax.sound.sampled.Clip;
-import javax.sound.sampled.LineUnavailableException;
+import javax.sound.sampled.*;
 
 /**
  * Allows for audio playback controls. One AudioInputStream is loaded at a time, and it is played through the Clip.
@@ -93,6 +90,20 @@ public class SoundPlayer {
             clip.setMicrosecondPosition(pausedTime);
             clip.start();
         }
+    }
+
+    /**
+     * Sets the sound playback volume.
+     * @param volume float where 0 means 0% volume and 1 means 100% volume
+     */
+    public void setVolume(float volume) {
+        FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
+        if(volume < 0f) {
+            volume = 0f;
+        } else if (volume > 1f) {
+            volume = 1f;
+        }
+        volumeControl.setValue(volume);
     }
 
     /**

@@ -2,10 +2,11 @@ package MusicClasses;
 
 import UtilityClasses.FileLoader;
 import java.io.File;
+import java.io.Serializable;
 import java.time.Duration;
 import java.util.Objects;
 
-public class Song {
+public class Song implements Serializable {
     private String title;
     private String artist;
     private Album album;
