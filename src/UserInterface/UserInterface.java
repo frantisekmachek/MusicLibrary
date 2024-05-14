@@ -1,9 +1,6 @@
 package UserInterface;
 
-import UserInterface.Panels.CustomVerticalScrollPane;
-import UserInterface.Panels.SectionChoicePanel;
-import UserInterface.Panels.SectionContainerPanel;
-import UserInterface.Panels.SectionPanel;
+import UserInterface.Panels.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -56,6 +53,7 @@ public class UserInterface {
             loaded = true;
 
             // UIManager.put( "ScrollBar.maximumThumbSize", new Dimension(15, 100));
+            UIManager.put("ScrollBar.width", 15);
 
             loadWindow();
             loadMainPanel();
@@ -82,8 +80,6 @@ public class UserInterface {
     private void loadMainPanel() {
         JPanel mainPanel = new JPanel(null);
         mainPanel.setSize(800, 600);
-        mainPanel.setAlignmentX(0);
-        mainPanel.setAlignmentY(0);
         mainPanel.setBackground(Color.BLACK);
         this.mainPanel = mainPanel;
         window.add(mainPanel);
@@ -116,13 +112,10 @@ public class UserInterface {
 
     // Placeholder section loader method, to be reworked
     private void loadSections() {
-        SectionPanel section1 = new SectionPanel();
+        SongSectionPanel songSection = new SongSectionPanel();
         SectionPanel section2 = new SectionPanel();
         SectionPanel section3 = new SectionPanel();
-        loadDummyComponents(section1, "Song");
-        loadDummyComponents(section2, "Album");
-        loadDummyComponents(section3, "Playlist");
-        sections.add(section1);
+        sections.add(songSection);
         sections.add(section2);
         sections.add(section3);
     }
@@ -152,29 +145,12 @@ public class UserInterface {
         leftPanel.add(sectionScrollPane);
     }
 
-    // Method for testing purposes, will be removed later. Loads a few placeholder components in a container.
-    private void loadDummyComponents(JPanel container, String text) {
-        for(int i = 0; i < 10; i++) {
-            JPanel panel = loadDummy(text + " Placeholder " + (i + 1));
-            container.add(panel);
-        }
-        sectionPanel.revalidate();
-        sectionPanel.repaint();
+    /**
+     * Returns the main app window.
+     * @return main app window
+     */
+    public JFrame getWindow() {
+        return window;
     }
 
-    // Method for testing purposes, will be removed later. Creates a placeholder component.
-    private JPanel loadDummy(String innerText) {
-        JPanel panel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        panel.setPreferredSize(new Dimension(250,60));
-        panel.setMaximumSize(new Dimension(250, 60));
-        panel.setBorder(BorderFactory.createLineBorder(Color.BLACK));
-        panel.setBackground(new Color(156, 156, 156));
-
-        JLabel text = new JLabel();
-        text.setText(innerText);
-        text.setForeground(Color.BLACK);
-        text.setFont(new Font("Urbana", Font.BOLD, 20));
-        panel.add(text);
-        return panel;
-    }
 }

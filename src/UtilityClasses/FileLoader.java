@@ -1,5 +1,7 @@
 package UtilityClasses;
 
+import MusicClasses.Song;
+
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
 import javax.swing.*;
@@ -10,6 +12,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 
 public class FileLoader {
@@ -178,6 +181,33 @@ public class FileLoader {
         } else {
             return false;
         }
+    }
+
+    /**
+     * Loads songs from the 'res\songs\songdata' directory.
+     * @return all songs in a HashSet
+     */
+    public static HashSet<Song> loadSongsFromResources() {
+        HashSet<Song> songs = new HashSet<>();
+        Serializer<Song> serializer = new Serializer<>();
+        String directoryPath = "res\\songs\\songdata";
+        File directory = new File(directoryPath);
+        if(directory.exists()) {
+            if(directory.isDirectory()) {
+                File[] files = directory.listFiles();
+                if(files != null) {
+                    for (File file : files) {
+                        if(file.isFile()) {
+                            Song song = serializer.deserializeObject(file.getPath());
+                            if(song != null) {
+                                songs.add(song);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return songs;
     }
 
 }

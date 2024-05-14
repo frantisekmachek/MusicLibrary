@@ -8,11 +8,13 @@ import java.awt.*;
  */
 public class SectionContainerPanel extends JPanel {
     private SectionPanel currentSection;
+    private Dimension size = new Dimension(250, 0);
 
     /**
      * Constructor which loads the panel properties.
      */
     public SectionContainerPanel() {
+        super();
         loadProperties();
     }
 
@@ -34,6 +36,7 @@ public class SectionContainerPanel extends JPanel {
         currentSection = section;
         add(currentSection);
         System.out.println("Section opened.");
+        resize();
     }
 
     /**
@@ -55,9 +58,23 @@ public class SectionContainerPanel extends JPanel {
      * Loads the panel properties such as size, background color and layout.
      */
     private void loadProperties() {
-        setPreferredSize(new Dimension(250, 1000));
-        setSize(250, 600);
-        setBackground(new Color(41, 41, 41));
+        setPreferredSize(size);
+        setBackground(new Color(37, 37, 37));
         setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    }
+
+    /**
+     * Resizes the panel based on the preferred size of all the components inside the currently
+     * selected section.
+     */
+    public void resize() {
+        Component[] components = currentSection.getComponents();
+        int totalSize = 0;
+        for (Component component : components) {
+            totalSize += (int)component.getPreferredSize().getHeight();
+        }
+        size = new Dimension(250, totalSize);
+        setPreferredSize(size);
+        System.out.println(size);
     }
 }

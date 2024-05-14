@@ -4,14 +4,22 @@ import javax.swing.*;
 import java.awt.*;
 
 /**
- * Unfinished class. Placeholder section panel.
+ * Represents a section on the left panel.
  */
 public class SectionPanel extends JPanel {
-    public SectionPanel() { // work in progress
-        setPreferredSize(new Dimension(250, 1000));
-        setSize(250, 1000);
-        setBackground(new Color(0, 0, 0));
-        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-        setBounds(0,0,250,1000);
+    private Dimension size = new Dimension(250, 0);
+    public SectionPanel() {
+        super();
+        loadProperties();
     }
+
+    /**
+     * Loads the panel properties.
+     */
+    private void loadProperties() {
+        setPreferredSize(size);
+        setBackground(new Color(37, 37, 37));
+        setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
+    }
+
 }

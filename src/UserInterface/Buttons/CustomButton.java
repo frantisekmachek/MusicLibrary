@@ -29,6 +29,7 @@ public abstract class CustomButton extends JButton implements ActionListener {
      * @param font button text font
      */
     public CustomButton(Dimension size, String text, Color bgColor, Color hoverBgColor, Color fgColor, Font font) {
+        super();
         this.defaultSize = size;
         this.text = text;
         this.bgColor = bgColor;
@@ -47,6 +48,7 @@ public abstract class CustomButton extends JButton implements ActionListener {
         setText(text);
         setPreferredSize(defaultSize);
         setMaximumSize(defaultSize);
+        setMinimumSize(defaultSize);
         setFont(font);
         setFocusable(false);
         setBackground(bgColor);
@@ -64,15 +66,34 @@ public abstract class CustomButton extends JButton implements ActionListener {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
-                setBackground(hoverBgColor);
+                mouseEnterAction(e);
             }
 
             @Override
             public void mouseExited(MouseEvent e) {
-                setBackground(bgColor);
+                mouseExitAction(e);
             }
         });
     }
+
+    /**
+     * Changes the background color and mouse cursor.
+     * @param e mouse event
+     */
+    protected void mouseEnterAction(MouseEvent e) {
+        setBackground(hoverBgColor);
+        ((JComponent) e.getSource()).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }
+
+    /**
+     * Changes the background color and mouse cursor.
+     * @param e mouse event
+     */
+    protected void mouseExitAction(MouseEvent e) {
+        setBackground(bgColor);
+        ((JComponent) e.getSource()).setCursor(Cursor.getDefaultCursor());
+    }
+
 
     /**
      * Prevents the button from turning blue when clicked (default JButton behavior).

@@ -1,9 +1,10 @@
 package MusicClasses;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class SongList {
+public class SongList implements Serializable {
     private String title;
     private ArrayList<Song> songs = new ArrayList<>();
 

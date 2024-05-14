@@ -3,6 +3,7 @@ package UserInterface.Buttons;
 import UserInterface.Panels.SectionPanel;
 import UserInterface.UserInterface;
 
+import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.MouseAdapter;
@@ -35,27 +36,27 @@ public class SectionButton extends CustomButton {
     }
 
     /**
-     * Makes the button change its background color when hovered over.
-     * It is an overridden method from the CustomButton class, and it operates the same way,
-     * but the background color is only changed when the button isn't selected.
+     * Vhanges the background color if the button isn't selected and changes the cursor.
+     * @param e mouse event
      */
     @Override
-    protected void addHoverListener() {
-        addMouseListener(new MouseAdapter() {
-            @Override
-            public void mouseEntered(MouseEvent e) {
-                if(!selected) {
-                    setBackground(hoverBgColor);
-                }
-            }
+    protected void mouseEnterAction(MouseEvent e) {
+        if(!selected) {
+            setBackground(hoverBgColor);
+        }
+        ((JComponent) e.getSource()).setCursor(Cursor.getPredefinedCursor(Cursor.HAND_CURSOR));
+    }
 
-            @Override
-            public void mouseExited(MouseEvent e) {
-                if(!selected) {
-                    setBackground(bgColor);
-                }
-            }
-        });
+    /**
+     * Changes the background color if the button isn't selected and changes the cursor.
+     * @param e mouse event
+     */
+    @Override
+    protected void mouseExitAction(MouseEvent e) {
+        if(!selected) {
+            setBackground(bgColor);
+        }
+        ((JComponent) e.getSource()).setCursor(Cursor.getDefaultCursor());
     }
 
     /**

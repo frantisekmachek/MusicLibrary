@@ -1,8 +1,9 @@
 package MusicClasses;
 
 import javax.swing.*;
+import java.io.Serializable;
 
-public class Album extends SongList {
+public class Album extends SongList implements Serializable {
     private String artist;
     private ImageIcon cover;
 
