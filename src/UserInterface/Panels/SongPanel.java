@@ -2,11 +2,15 @@ package UserInterface.Panels;
 
 import MusicClasses.Album;
 import MusicClasses.Song;
+import UserInterface.Dialogs.SongDialog;
+import UserInterface.UserInterface;
 import UtilityClasses.FileLoader;
 
 import javax.swing.*;
 import javax.swing.border.LineBorder;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 
@@ -73,6 +77,21 @@ public class SongPanel extends JPanel {
         JMenuItem menuItem2 = new JMenuItem("Remove");
         popupMenu.add(menuItem1);
         popupMenu.add(menuItem2);
+
+        menuItem1.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JFrame mainWindow = UserInterface.getInstance().getWindow();
+                SongDialog dialog = new SongDialog(mainWindow, SongPanel.this, song);
+            }
+        });
+
+        menuItem2.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                FileLoader.removeSong(song);
+            }
+        });
 
         setComponentPopupMenu(popupMenu);
     }
@@ -150,5 +169,25 @@ public class SongPanel extends JPanel {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * Updates the panel labels.
+     * @param title new title
+     * @param artist new artist
+     */
+    public void updateLabels(String title, String artist) {
+        titleLabel.setText(title);
+        artistLabel.setText(artist);
+        songSection.revalidate();
+        songSection.repaint();
+    }
+
+    /**
+     * Returns the song the panel represents.
+     * @return song the panel represents
+     */
+    public Song getSong() {
+        return song;
     }
 }

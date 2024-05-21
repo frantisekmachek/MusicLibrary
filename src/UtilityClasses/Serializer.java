@@ -14,19 +14,15 @@ public class Serializer<T extends Serializable> {
      * @return true if serialization was successful, false otherwise
      */
     public boolean serializeObject(T object, String filePath) {
-        if(FileLoader.fileExists(filePath)) {
-            try {
-                FileOutputStream fileOut = new FileOutputStream(filePath);
-                ObjectOutputStream objOut = new ObjectOutputStream(fileOut);
-                objOut.writeObject(object);
-                objOut.close();
-                fileOut.close();
-                return true;
-            } catch (IOException e) {
-                e.printStackTrace();
-                return false;
-            }
-        } else {
+        try {
+            FileOutputStream fileOut = new FileOutputStream(filePath);
+            ObjectOutputStream objOut = new ObjectOutputStream(fileOut);
+            objOut.writeObject(object);
+            objOut.close();
+            fileOut.close();
+            return true;
+        } catch (IOException e) {
+            e.printStackTrace();
             return false;
         }
     }

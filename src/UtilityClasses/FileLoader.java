@@ -1,6 +1,8 @@
 package UtilityClasses;
 
+import MusicClasses.Library;
 import MusicClasses.Song;
+import UserInterface.UserInterface;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -97,10 +99,12 @@ public class FileLoader {
      * Copies an image file to the 'songs' folder in the 'res' directory.
      * @param filePath the sound file path
      * @throws Exception file is not a sound file or an error occurred while moving the file
+     * @returns new file path
      */
-    public static void copySong(String filePath) throws Exception {
+    public static Path copySong(String filePath) throws Exception {
         if(isSoundFile(filePath)) {
-            copyToResources(filePath, "songs");
+            Path newPath = copyToResources(filePath, "songs");
+            return newPath;
         } else {
             throw new Exception("File attempted to copy to the 'songs' folder is not a sound file.");
         }
@@ -111,14 +115,17 @@ public class FileLoader {
      * @param filePath the file path
      * @param resFolderName the resource folder name
      * @throws Exception error occurred while moving the file
+     * @returns new file path
      */
-    public static void copyToResources(String filePath, String resFolderName) throws Exception  {
+    public static Path copyToResources(String filePath, String resFolderName) throws Exception  {
         File file = new File(filePath);
         if(file.exists()) {
             Path sourcePath = Paths.get(filePath);
             Path destinationPath = Paths.get("res\\" + resFolderName);
             try {
-                Files.move(sourcePath, destinationPath.resolve(sourcePath.getFileName()));
+                Path newPath = destinationPath.resolve(sourcePath.getFileName());
+                Files.move(sourcePath, newPath);
+                return newPath;
             } catch (IOException e) {
                 throw new Exception("Error moving file: " + e.getMessage());
             }
@@ -208,6 +215,58 @@ public class FileLoader {
             }
         }
         return songs;
+    }
+
+    /**
+     * Extracts the file name (gets rid of the extension).
+     * @param file the file
+     * @return file name without an extension
+     */
+    public static String getFileNameWithoutExtension(File file) {
+        String fileName = file.getName();
+        int lastDotIndex = fileName.lastIndexOf('.');
+        if (lastDotIndex != -1 && lastDotIndex != 0) {
+            return fileName.substring(0, lastDotIndex);
+        } else {
+            return fileName;
+        }
+    }
+
+    /**
+     * Saves a song object.
+     * @param song song object being saved
+     */
+    public static void saveSong(Song song) {
+        String dataPath = getSongDataPath(song);
+        Serializer<Song> songSer = new Serializer<>();
+        songSer.serializeObject(song, dataPath);
+    }
+
+    /**
+     * Finds a song's data file path.
+     * @param song song
+     * @return song data file path
+     */
+    private static String getSongDataPath(Song song) {
+        File songFile = new File(song.getFilePath());
+        String fileName = FileLoader.getFileNameWithoutExtension(songFile);
+        String dataFilePath = "res\\songs\\songdata\\" + fileName + ".ser";
+        return dataFilePath;
+    }
+
+    /**
+     * Removes a song from the Library as well as the files.
+     * @param song song being removed
+     */
+    public static void removeSong(Song song) {
+        File songFile = new File(song.getFilePath());
+        String dataPath = getSongDataPath(song);
+        File dataFile = new File(dataPath);
+
+        songFile.delete();
+        dataFile.delete();
+
+        Library.getInstance().removeSong(song);
     }
 
 }

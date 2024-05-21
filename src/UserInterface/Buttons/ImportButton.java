@@ -1,11 +1,16 @@
 package UserInterface.Buttons;
 
+import UserInterface.Dialogs.SongDialog;
 import UserInterface.UserInterface;
+import UtilityClasses.CustomFileFilter;
+import UtilityClasses.FileLoader;
 
 import javax.swing.*;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import java.awt.*;
 import java.awt.event.ActionEvent;
+import java.io.File;
+import java.nio.file.Path;
 
 /**
  * Allows the user to import songs.
@@ -22,20 +27,38 @@ public class ImportButton extends CustomButton {
 
     /**
      * Opens a file chooser when clicked and the user is prompted to choose a sound file.
+     * Then, a dialog is opened where the user chooses the song title and artist.
      * @param e the event to be processed
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        FileNameExtensionFilter filter = new FileNameExtensionFilter("Sound Files (*.wav, *.mp3, *.ogg, *.flac)", "mp3", "wav", "ogg", "flac");
+        FileNameExtensionFilter extFilter = new FileNameExtensionFilter("Sound Files (*.wav, *.mp3, *.ogg, *.flac)", "mp3", "wav", "ogg", "flac");
+        CustomFileFilter filter = new CustomFileFilter(extFilter);
+
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setFileFilter(filter);
         fileChooser.setAcceptAllFileFilterUsed(false);
 
         int returnValue = fileChooser.showOpenDialog(UserInterface.getInstance().getWindow());
         if (returnValue == JFileChooser.APPROVE_OPTION) {
-            java.io.File selectedFile = fileChooser.getSelectedFile();
-            // TODO: implement something
+            File selectedFile = fileChooser.getSelectedFile();
+            String filePath = selectedFile.getPath();
+            try {
+                Path newPath = FileLoader.copySong(filePath);
+                openDialog(newPath.toString());
+            } catch (Exception ex) {
+                JOptionPane.showMessageDialog(UserInterface.getInstance().getWindow(), "File couldn't be copied.");
+            }
         }
+    }
+
+    /**
+     * Opens the song dialog.
+     * @param filePath file path chosen in the file chooser
+     */
+    private void openDialog(String filePath) {
+        JFrame mainWindow = UserInterface.getInstance().getWindow();
+        SongDialog dialog = new SongDialog(mainWindow, filePath);
     }
 
 }

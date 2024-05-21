@@ -1,5 +1,6 @@
 package UserInterface;
 
+import MusicClasses.Song;
 import UserInterface.Panels.*;
 
 import javax.swing.*;
@@ -151,6 +152,24 @@ public class UserInterface {
      */
     public JFrame getWindow() {
         return window;
+    }
+
+    /**
+     * Creates a new panel for a song.
+     * @param song the song being added
+     */
+    public void createSongElement(Song song) {
+        SongSectionPanel songSectionPanel = (SongSectionPanel)sections.get(0);
+        songSectionPanel.createSongPanel(song);
+    }
+
+    /**
+     * Removes a panel belonging to a given song.
+     * @param song the song being removed
+     */
+    public void removeSongElement(Song song) {
+        SongSectionPanel songSectionPanel = (SongSectionPanel)sections.get(0);
+        songSectionPanel.removeSongPanel(song);
     }
 
 }
