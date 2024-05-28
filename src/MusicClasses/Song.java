@@ -18,8 +18,28 @@ public class Song implements Serializable {
         return album;
     }
 
+    /**
+     * Sets the song's album and automatically removes or adds itself to it.
+     * @param album the new album
+     */
     public void setAlbum(Album album) {
+        Album oldAlbum = this.album;
         this.album = album;
+        if(oldAlbum != null) {
+            oldAlbum.removeSong(this);
+        }
+        if(album != null) {
+            album.addSong(this);
+        }
+        if(album == null) {
+            if(oldAlbum == null) {
+                System.out.println("Song called " + title + " by " + artist + " was assigned no album.");
+            } else {
+                System.out.println("Song called " + title + " by " + artist + " was removed from the album called " + oldAlbum.getTitle() + " by " + oldAlbum.getArtist() + ".");
+            }
+        } else {
+            System.out.println("Song called " + title + " by " + artist + " was moved to the album called " + album.getTitle() + " by " + album.getArtist() + ".");
+        }
     }
 
     public String getTitle() {

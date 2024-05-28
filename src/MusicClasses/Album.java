@@ -2,10 +2,11 @@ package MusicClasses;
 
 import javax.swing.*;
 import java.io.Serializable;
+import java.util.Objects;
 
 public class Album extends SongList implements Serializable {
     private String artist;
-    private ImageIcon cover;
+    private String coverFilePath;
 
     //region Getters and setters
     /**
@@ -17,6 +18,14 @@ public class Album extends SongList implements Serializable {
     }
 
     /**
+     * Sets the path to the file where the album is stored.
+     * @param filePath path to the file where the album is stored
+     */
+    public void setFilePath(String filePath) {
+        this.filePath = filePath;
+    }
+
+    /**
      * Returns the artist name.
      * @return the artist name
      */
@@ -25,19 +34,19 @@ public class Album extends SongList implements Serializable {
     }
 
     /**
-     * Sets the cover of the album.
-     * @param cover the new album cover
+     * Sets the path to the file where the cover image is stored.
+     * @param coverFilePath path to the file where the cover image is stored
      */
-    public void setCover(ImageIcon cover) {
-        this.cover = cover;
+    public void setCoverFilePath(String coverFilePath) {
+        this.coverFilePath = coverFilePath;
     }
 
     /**
-     * Returns the album cover.
-     * @return the album cover
+     * Returns the path to the file where the cover image is stored.
+     * @return path to the file where the cover image is stored
      */
-    public ImageIcon getCover() {
-        return cover;
+    public String getCoverFilePath() {
+        return coverFilePath;
     }
     //endregion
 
@@ -49,5 +58,27 @@ public class Album extends SongList implements Serializable {
     public Album(String title, String artist) {
         super(title);
         this.artist = artist;
+    }
+
+    /**
+     * Returns a String in this format: ARTIST - TITLE
+     * @return human-readable representation of the album
+     */
+    @Override
+    public String toString() {
+        return artist + " - " + title;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Album album = (Album) o;
+        return Objects.equals(artist, album.artist) && Objects.equals(title, album.getTitle());
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(artist, title);
     }
 }

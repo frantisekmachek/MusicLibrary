@@ -94,7 +94,6 @@ public abstract class CustomButton extends JButton implements ActionListener {
         ((JComponent) e.getSource()).setCursor(Cursor.getDefaultCursor());
     }
 
-
     /**
      * Prevents the button from turning blue when clicked (default JButton behavior).
      * That is realized by overriding the paintButtonPressed method in the BasicButtonUI (and setting the

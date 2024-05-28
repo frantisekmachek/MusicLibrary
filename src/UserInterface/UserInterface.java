@@ -1,7 +1,10 @@
 package UserInterface;
 
+import MusicClasses.Album;
 import MusicClasses.Song;
 import UserInterface.Panels.*;
+import UserInterface.Panels.Albums.AlbumSectionPanel;
+import UserInterface.Panels.Songs.SongSectionPanel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -114,10 +117,10 @@ public class UserInterface {
     // Placeholder section loader method, to be reworked
     private void loadSections() {
         SongSectionPanel songSection = new SongSectionPanel();
-        SectionPanel section2 = new SectionPanel();
+        AlbumSectionPanel albumSection = new AlbumSectionPanel();
         SectionPanel section3 = new SectionPanel();
         sections.add(songSection);
-        sections.add(section2);
+        sections.add(albumSection);
         sections.add(section3);
     }
 
@@ -170,6 +173,24 @@ public class UserInterface {
     public void removeSongElement(Song song) {
         SongSectionPanel songSectionPanel = (SongSectionPanel)sections.get(0);
         songSectionPanel.removeSongPanel(song);
+    }
+
+    /**
+     * Creates a new panel for an album.
+     * @param album the album being added
+     */
+    public void createAlbumElement(Album album) {
+        AlbumSectionPanel albumSectionPanel = (AlbumSectionPanel)sections.get(1);
+        albumSectionPanel.createAlbumPanel(album);
+    }
+
+    /**
+     * Removes a panel belonging to a given album.
+     * @param album the album being removed
+     */
+    public void removeAlbumElement(Album album) {
+        AlbumSectionPanel albumSectionPanel = (AlbumSectionPanel)sections.get(1);
+        albumSectionPanel.removeAlbumPanel(album);
     }
 
 }

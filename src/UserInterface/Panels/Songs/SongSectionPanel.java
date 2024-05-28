@@ -1,14 +1,13 @@
-package UserInterface.Panels;
+package UserInterface.Panels.Songs;
 
 import MusicClasses.Library;
 import MusicClasses.Song;
 import MusicClasses.SongList;
 import UserInterface.Buttons.ImportButton;
-import UtilityClasses.FileLoader;
+import UserInterface.Panels.SectionPanel;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 
 /**
  * Panel which displays songs via SongPanel components.

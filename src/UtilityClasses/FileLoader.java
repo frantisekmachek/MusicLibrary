@@ -1,5 +1,6 @@
 package UtilityClasses;
 
+import MusicClasses.Album;
 import MusicClasses.Library;
 import MusicClasses.Song;
 import UserInterface.UserInterface;
@@ -87,9 +88,10 @@ public class FileLoader {
      * @param filePath the image file path
      * @throws Exception file is not an image file or an error occurred while moving the file
      */
-    public static void copyCover(String filePath) throws Exception {
+    public static Path copyCover(String filePath) throws Exception {
         if(isImageFile(filePath)) {
-            copyToResources(filePath, "covers");
+            Path newPath = copyToResources(filePath, "covers");
+            return newPath;
         } else {
             throw new Exception("File attempted to copy to the 'covers' folder is not an image file.");
         }
@@ -269,4 +271,58 @@ public class FileLoader {
         Library.getInstance().removeSong(song);
     }
 
+    /**
+     * Removes an album from the files.
+     * @param album album being removed
+     */
+    public static void removeAlbum(Album album) {
+        File albumFile = new File(album.getFilePath());
+
+        if(albumFile.exists()) {
+            albumFile.delete();
+        }
+
+        Library.getInstance().removeAlbum(album);
+    }
+
+    /**
+     * Saves an Album object.
+     * @param album album being saved
+     */
+    public static void saveAlbum(Album album) {
+        String filePath = album.getFilePath();
+        if(filePath == null) {
+            filePath = "res\\albums\\" + album.getArtist() + "-" + album.getTitle() + ".ser";
+            album.setFilePath(filePath);
+        }
+        Serializer<Album> ser = new Serializer<>();
+        ser.serializeObject(album, filePath);
+    }
+
+    /**
+     * Loads all albums from the 'res' directory.
+     * @return HashSet of all Album objects loaded from the 'res' directory
+     */
+    public static HashSet<Album> loadAlbumsFromResources() {
+        HashSet<Album> albums = new HashSet<>();
+        Serializer<Album> serializer = new Serializer<>();
+        String directoryPath = "res\\albums";
+        File directory = new File(directoryPath);
+        if(directory.exists()) {
+            if(directory.isDirectory()) {
+                File[] files = directory.listFiles();
+                if(files != null) {
+                    for (File file : files) {
+                        if(file.isFile()) {
+                            Album album = serializer.deserializeObject(file.getPath());
+                            if(album != null) {
+                                albums.add(album);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+        return albums;
+    }
 }

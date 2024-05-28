@@ -5,8 +5,9 @@ import java.util.ArrayList;
 import java.util.Collections;
 
 public class SongList implements Serializable {
-    private String title;
-    private ArrayList<Song> songs = new ArrayList<>();
+    protected String title;
+    protected ArrayList<Song> songs = new ArrayList<>();
+    protected String filePath;
 
     //region Getters and setters
     /**
@@ -15,6 +16,10 @@ public class SongList implements Serializable {
      */
     public String getTitle() {
         return title;
+    }
+
+    public String getFilePath() {
+        return filePath;
     }
 
     /**

@@ -35,8 +35,8 @@ public class SectionContainerPanel extends JPanel {
     private void loadSection(SectionPanel section) {
         currentSection = section;
         add(currentSection);
-        System.out.println("Section opened.");
         resize();
+        repaint();
     }
 
     /**
@@ -75,6 +75,5 @@ public class SectionContainerPanel extends JPanel {
         }
         size = new Dimension(250, totalSize);
         setPreferredSize(size);
-        System.out.println(size);
     }
 }

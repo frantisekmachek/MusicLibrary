@@ -36,7 +36,7 @@ public class SectionButton extends CustomButton {
     }
 
     /**
-     * Vhanges the background color if the button isn't selected and changes the cursor.
+     * Changes the background color if the button isn't selected and changes the cursor.
      * @param e mouse event
      */
     @Override
