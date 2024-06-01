@@ -1,11 +1,13 @@
 package UserInterface.Panels.Songs;
 
 import MusicClasses.Album;
+import MusicClasses.Library;
 import MusicClasses.Song;
 import UserInterface.Dialogs.SongDialog;
 import UserInterface.Panels.ItemPanel;
 import UtilityClasses.FileLoader;
 import UserInterface.UserInterface;
+import UtilityClasses.SoundPlayer;
 
 import javax.swing.*;
 import java.awt.*;
@@ -21,6 +23,7 @@ public class SongPanel extends ItemPanel {
         super(songSection);
         this.song = song;
         loadAll();
+        addExtraPopupOptions();
     }
 
     /**
@@ -106,5 +109,28 @@ public class SongPanel extends ItemPanel {
      */
     protected void removeAction() {
         FileLoader.removeSong(song);
+    }
+
+    @Override
+    protected void clickAction() {
+        try {
+            SoundPlayer.getInstance().setCurrentSong(song, true);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void addExtraPopupOptions() {
+        JMenuItem addToQueue = new JMenuItem("Add to queue");
+        popupMenu.add(addToQueue);
+        // Add later with functionality:
+        // popupMenu.add(addSong);
+        // popupMenu.add(removeSong);
+
+        addToQueue.addActionListener(e -> addToQueue());
+    }
+
+    private void addToQueue() {
+        Library.getInstance().addSongToQueue(song);
     }
 }

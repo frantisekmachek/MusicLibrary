@@ -9,7 +9,7 @@ import java.awt.*;
  * custom scrollbar.
  */
 public class CustomVerticalScrollPane extends JScrollPane {
-    protected Color defThumbColor = new Color(79, 79, 79);
+    protected Color defThumbColor = new Color(0,122,217);
     protected Color defTrackColor = new Color(186, 186, 186);
 
     /**

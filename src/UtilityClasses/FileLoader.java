@@ -33,25 +33,25 @@ public class FileLoader {
     }
 
     /**
-     * Checks if a file at a given path is a sound file. That means it has one of these extensions: mp3, wav, ogg or flac.
+     * Checks if a file at a given path is a sound file. It needs to be a .wav file, because that's what Java supports.
      * @param filePath the file path
      * @return true if the file is a sound file, false if not
      */
     public static boolean isSoundFile(String filePath) {
         String extension = FileLoader.getFileExtension(filePath);
-        List<String> soundExtensions = Arrays.asList("mp3", "wav", "ogg", "flac");
+        List<String> soundExtensions = Arrays.asList("wav");
 
         return soundExtensions.contains(extension);
     }
 
     /**
-     * Checks if a file at a given path is an image file. That means it has one of these extensions: jpg, jpeg, png, gif or bmp.
+     * Checks if a file at a given path is an image file. That means it has one of these extensions: jpg, jpeg, or png.
      * @param filePath the file path
      * @return true if the file is a sound file, false if not
      */
     public static boolean isImageFile(String filePath) {
         String extension = FileLoader.getFileExtension(filePath);
-        List<String> imageExtensions = Arrays.asList("jpg", "jpeg", "png", "gif", "bmp");
+        List<String> imageExtensions = Arrays.asList("jpg", "jpeg", "png");
 
         return imageExtensions.contains(extension);
     }
@@ -286,7 +286,7 @@ public class FileLoader {
     }
 
     /**
-     * Saves an Album object.
+     * Saves an Album object. Also saves all the songs included in the album.
      * @param album album being saved
      */
     public static void saveAlbum(Album album) {
@@ -297,6 +297,9 @@ public class FileLoader {
         }
         Serializer<Album> ser = new Serializer<>();
         ser.serializeObject(album, filePath);
+        for(Song song : album.getSongs()) {
+            saveSong(song);
+        }
     }
 
     /**

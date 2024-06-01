@@ -32,7 +32,7 @@ public class ImportButton extends CustomButton {
      */
     @Override
     public void actionPerformed(ActionEvent e) {
-        FileNameExtensionFilter extFilter = new FileNameExtensionFilter("Sound Files (*.wav, *.mp3, *.ogg, *.flac)", "mp3", "wav", "ogg", "flac");
+        FileNameExtensionFilter extFilter = new FileNameExtensionFilter("Sound Files (*.wav)", "wav");
         CustomFileFilter filter = new CustomFileFilter(extFilter);
 
         JFileChooser fileChooser = new JFileChooser();

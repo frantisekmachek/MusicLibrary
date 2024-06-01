@@ -34,7 +34,7 @@ public class AlbumDialog extends BasicDialog {
 
     /**
      * Creates or updates the album.
-     * @return true if input was valid, false otherwise
+     * @return true if the dialog can be closed, false otherwise (for example when the input was invalid)
      */
     public boolean updateAlbum() {
         String title = albumTitleField.getText().trim();
@@ -48,14 +48,25 @@ public class AlbumDialog extends BasicDialog {
         if(album == null) {
             // Create new album
             Album newAlbum = new Album(title, artist);
-            Library.getInstance().addAlbum(newAlbum);
+            try {
+                Library.getInstance().addAlbum(newAlbum);
+            } catch (Exception e) {
+                JOptionPane.showMessageDialog(UserInterface.getInstance().getWindow(), "Album already exists.");
+                return false;
+            }
         } else {
             // Update the album
-            album.setTitle(title);
-            album.setArtist(artist);
-            albumPanel.updateLabels(title, artist);
-            albumPanel.updateCover();
-            Library.getInstance().updateAlbum(album);
+            Album temp = new Album(title, artist);
+            if(Library.getInstance().getAlbums().contains(temp)) {
+                JOptionPane.showMessageDialog(UserInterface.getInstance().getWindow(), "Album already exists.");
+                return false;
+            } else {
+                album.setTitle(title);
+                album.setArtist(artist);
+                albumPanel.updateLabels(title, artist);
+                albumPanel.updateCover();
+                Library.getInstance().updateAlbum(album);
+            }
         }
 
         return true;

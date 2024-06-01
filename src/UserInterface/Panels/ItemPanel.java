@@ -1,5 +1,6 @@
 package UserInterface.Panels;
 
+import UserInterface.UserInterface;
 import UtilityClasses.FileLoader;
 
 import javax.swing.*;
@@ -50,13 +51,13 @@ public abstract class ItemPanel extends JPanel {
         loadLabelPanel();
         loadLabels();
 
-        addCursorListener();
+        addMouseListeners();
     }
 
     /**
      * Loads the mouse listener which changes the cursor when the mouse hovers over it.
      */
-    private void addCursorListener() {
+    private void addMouseListeners() {
         addMouseListener(new MouseAdapter() {
             @Override
             public void mouseEntered(MouseEvent e) {
@@ -70,6 +71,11 @@ public abstract class ItemPanel extends JPanel {
                 setBackground(new Color(0,0,0,0));
                 ((JComponent) e.getSource()).setCursor(Cursor.getDefaultCursor());
                 section.repaint();
+            }
+
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                clickAction();
             }
         });
     }
@@ -115,19 +121,6 @@ public abstract class ItemPanel extends JPanel {
     }
 
     /**
-     * Resizes the cover so that it fits in the label.
-     * @param icon cover (icon)
-     * @param size desired cover size
-     * @return resized cover
-     */
-    protected ImageIcon resizeIcon(ImageIcon icon, Dimension size) {
-        Image originalImage = icon.getImage();
-        Image resizedImage = originalImage.getScaledInstance((int)size.getWidth(), (int)size.getHeight(), Image.SCALE_SMOOTH);
-        ImageIcon resizedIcon = new ImageIcon(resizedImage);
-        return resizedIcon;
-    }
-
-    /**
      * Loads the default song cover icon.
      */
     protected void loadDefaultIcon() {
@@ -146,7 +139,7 @@ public abstract class ItemPanel extends JPanel {
     public void setIcon(ImageIcon icon) {
         this.icon = icon;
         Dimension size = new Dimension(50,50);
-        ImageIcon resizedIcon = resizeIcon(icon, size);
+        ImageIcon resizedIcon = UserInterface.resizeIcon(icon, size);
         iconLabel.setIcon(resizedIcon);
     }
 
@@ -169,4 +162,9 @@ public abstract class ItemPanel extends JPanel {
      * Does something when the user chooses the remove option in the popup menu.
      */
     protected abstract void removeAction();
+
+    /**
+     * Does something when the user clicks on the panel.
+     */
+    protected abstract void clickAction();
 }

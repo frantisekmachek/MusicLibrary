@@ -1,5 +1,6 @@
 package UserInterface.Panels.Songs;
 
+import MusicClasses.Album;
 import MusicClasses.Library;
 import MusicClasses.Song;
 import MusicClasses.SongList;
@@ -63,6 +64,29 @@ public class SongSectionPanel extends SectionPanel {
                     this.remove(component);
                     revalidate();
                     repaint();
+                }
+            }
+        }
+    }
+
+    /**
+     * Updates the covers on song panels so that they correspond with the actual album cover.
+     * @param album album whose songs need to be updated
+     */
+    public void updateSongCovers(Album album) {
+        Component[] components = getComponents();
+        for(Component component : components) {
+            if(component instanceof SongPanel) {
+                if(((SongPanel)component).getSong().getAlbum() != null) {
+                    if(((SongPanel)component).getSong().getAlbum().equals(album)) {
+                        ((SongPanel)component).updateCover(album);
+                        repaint();
+                    }
+                } else {
+                    if(album == null) {
+                        ((SongPanel)component).updateCover(null);
+                        repaint();
+                    }
                 }
             }
         }

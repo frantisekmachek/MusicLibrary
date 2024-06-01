@@ -31,15 +31,6 @@ public class PlaybackThread extends Thread {
     @Override
     public void run() {
         player.play();
-        while(true) {
-            if(player.isPaused()) {
-                try {
-                    Thread.sleep(50);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
     }
 
     /**

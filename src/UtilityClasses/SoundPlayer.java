@@ -1,5 +1,11 @@
 package UtilityClasses;
 
+import MusicClasses.Library;
+import MusicClasses.Song;
+import UserInterface.Player.PlaybackState;
+import UserInterface.Player.UpdateSliderThread;
+import UserInterface.UserInterface;
+
 import javax.sound.sampled.*;
 
 /**
@@ -8,10 +14,13 @@ import javax.sound.sampled.*;
  */
 public class SoundPlayer {
     private static SoundPlayer instance; // Singleton instance
-    private boolean isPaused = false;
+    private boolean isPaused = true;
     private long pausedTime = 0;
     private Clip clip;
     private AudioInputStream sound;
+    private Song currentSong;
+    private PlaybackThread thread;
+    private UpdateSliderThread sliderThread = new UpdateSliderThread();
 
     /**
      * Private constructor setting the Clip.
@@ -30,6 +39,19 @@ public class SoundPlayer {
         try {
             Clip clip = AudioSystem.getClip();
             SoundPlayer player = new SoundPlayer(clip);
+            clip.addLineListener(event -> {
+                if (event.getType() == LineEvent.Type.STOP) {
+                    if(!player.isPaused()) {
+                        System.out.println("Playback completed.");
+                        try {
+                            Song songInQueue = Library.getInstance().getSongInQueue();
+                            player.setCurrentSong(songInQueue, false);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }
+            });
             return player;
         } catch (LineUnavailableException e) {
             throw new Exception("Unable to use the audio system.");
@@ -44,11 +66,24 @@ public class SoundPlayer {
      * @throws Exception audio failed to load
      */
     public void setSound(String filePath) throws Exception {
-        AudioInputStream audio = FileLoader.loadSoundFromFile(filePath);
-        sound = audio;
+
+        isPaused = true;
+        pausedTime = 0;
         clip.stop();
-        clip.setFramePosition(0);
-        clip.open(sound);
+        clip.close();
+
+        if(filePath != null) {
+            AudioInputStream audio = FileLoader.loadSoundFromFile(filePath);
+            sound = audio;
+
+            clip.open(sound);
+            clip.setFramePosition(0);
+            clip.start();
+
+            isPaused = false;
+        } else {
+            sound = null;
+        }
     }
 
     /**
@@ -78,6 +113,10 @@ public class SoundPlayer {
             isPaused = true;
             pausedTime = clip.getMicrosecondPosition();
             clip.stop();
+            System.out.println("Sound playback paused.");
+
+            UserInterface.getInstance().getPlayButton().setState(PlaybackState.PAUSED);
+            sliderThread.pauseThread();
         }
     }
 
@@ -89,6 +128,10 @@ public class SoundPlayer {
             isPaused = false;
             clip.setMicrosecondPosition(pausedTime);
             clip.start();
+            System.out.println("Sound playback resumed.");
+
+            UserInterface.getInstance().getPlayButton().setState(PlaybackState.PLAYING);
+            sliderThread.resumeThread();
         }
     }
 
@@ -112,5 +155,55 @@ public class SoundPlayer {
      */
     public boolean isPaused() {
         return isPaused;
+    }
+
+    public void setCurrentSong(Song song, boolean addToHistory) throws Exception {
+        this.currentSong = song;
+        if(currentSong != null) {
+            setSound(currentSong.getFilePath());
+            System.out.println("Song called " + currentSong.getTitle() + " by " + currentSong.getArtist() + " is now playing.");
+
+            if(addToHistory) {
+                Library.getInstance().addSongToHistory(getCurrentSong());
+            }
+
+            UserInterface.getInstance().getPlayButton().setState(PlaybackState.PLAYING);
+
+            if (!sliderThread.started()) {
+                sliderThread.start();
+            } else {
+                sliderThread.resumeThread();
+            }
+        } else {
+            setSound(null);
+            System.out.println("No song is being played.");
+
+            UserInterface.getInstance().getPlayButton().setState(PlaybackState.STOPPED);
+        }
+        UserInterface.getInstance().loadSoundOnSlider();
+    }
+
+    public double getDurationInMilliseconds() {
+        long microseconds = clip.getMicrosecondLength();
+        double milliseconds = microseconds / 1000.0;
+        return milliseconds;
+    }
+
+    public Clip getClip() {
+        return clip;
+    }
+
+    public void setThread(PlaybackThread thread) {
+        this.thread = thread;
+    }
+
+    public void setMillisecondPosition(int position) {
+        long microsecondPosition = position * 1000L;
+        pausedTime = microsecondPosition;
+        clip.setMicrosecondPosition(microsecondPosition);
+    }
+
+    public Song getCurrentSong() {
+        return currentSong;
     }
 }

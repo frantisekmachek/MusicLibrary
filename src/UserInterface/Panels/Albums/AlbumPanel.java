@@ -84,6 +84,11 @@ public class AlbumPanel extends ItemPanel {
         FileLoader.removeAlbum(album);
     }
 
+    @Override
+    protected void clickAction() {
+        UserInterface.getInstance().openAlbum(album);
+    }
+
     /**
      * Adds some extra popup options (change cover, add song, remove song)
      */
@@ -123,7 +128,7 @@ public class AlbumPanel extends ItemPanel {
      * The file is copied to the 'res' directory.
      */
     private void openCoverFileChooser() {
-        FileNameExtensionFilter extFilter = new FileNameExtensionFilter("Image Files (*.jpg, *.jpeg, *.png, *.gif, *.bmp)", "jpg", "jpeg", "png", "gif", "bmp");
+        FileNameExtensionFilter extFilter = new FileNameExtensionFilter("Image Files (*.jpg, *.jpeg, *.png)", "jpg", "jpeg", "png");
         CustomFileFilter filter = new CustomFileFilter(extFilter);
 
         JFileChooser fileChooser = new JFileChooser();
@@ -138,12 +143,12 @@ public class AlbumPanel extends ItemPanel {
                 Path newPath = FileLoader.copyCover(filePath);
                 album.setCoverFilePath(newPath.toString());
                 Library.getInstance().updateAlbum(album);
-                // Change this panel cover
-                updateCover();
-                // TODO: update covers on songs that belong to this album
+                updateCover();                                         // Change this panel cover
+                UserInterface.getInstance().updateSongCovers(album);   // update covers on songs that belong to this album
                 JOptionPane.showMessageDialog(UserInterface.getInstance().getWindow(), "Album cover changed.");
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(UserInterface.getInstance().getWindow(), "Album cover couldn't be changed.");
+                ex.printStackTrace();
             }
         }
     }
