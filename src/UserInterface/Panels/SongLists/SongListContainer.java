@@ -32,7 +32,7 @@ public class SongListContainer extends JPanel {
         for (Component component : components) {
             totalSize += (int)component.getPreferredSize().getHeight();
         }
-        size = new Dimension(250, totalSize);
+        size = new Dimension(550, totalSize);
         setPreferredSize(size);
     }
 
