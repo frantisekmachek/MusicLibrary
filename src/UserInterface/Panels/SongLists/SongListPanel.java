@@ -84,9 +84,9 @@ public class SongListPanel extends JPanel {
             if(getParent() != null) {
                 SongListContainer cont = (SongListContainer) getParent();
                 cont.resize();
+                getParent().revalidate();
+                getParent().repaint();
             }
-            getParent().revalidate();
-            getParent().repaint();
         }
     }
 
@@ -101,9 +101,9 @@ public class SongListPanel extends JPanel {
         if(getParent() != null) {
             SongListContainer cont = (SongListContainer) getParent();
             cont.resize();
+            getParent().revalidate();
+            getParent().repaint();
         }
-        getParent().revalidate();
-        getParent().repaint();
     }
 
     /**

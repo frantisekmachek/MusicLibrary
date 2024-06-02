@@ -118,6 +118,7 @@ public class Library implements Serializable {
         allSongs.removeSong(song);
         UserInterface.getInstance().removeSongElement(song);
         UserInterface.getInstance().removeSongFromAlbumPanel(song, song.getAlbum());
+        FileLoader.saveLibrary();
         removeSongFromQueue(song);
         try {
             SoundPlayer.getInstance().setCurrentSong(null, false);
