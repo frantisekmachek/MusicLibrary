@@ -3,6 +3,8 @@ MusicLibrary is a Java music player where you can manage your songs and albums.
 
 *Icons used in this program were made by [**Font Awesome**](https://fontawesome.com/search?m=free&o=r).*
 
+![screenshot](https://github.com/frantisekmachek/MusicLibrary/assets/104194124/565b0408-08f8-447a-ae3d-52a1886f19f2)
+
 ## :cd: Songs
 ### :heavy_plus_sign: Import songs
 To import a song to the library, you have to navigate to the **"Songs"** tab. There you'll find the **"Import New"** button.
