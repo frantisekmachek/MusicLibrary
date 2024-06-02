@@ -57,7 +57,7 @@ public class PlaybackControlPanel extends JPanel {
         leftPanel.setBackground(new Color(0,0,0,0));
         leftPanel.setLayout(new BoxLayout(leftPanel, BoxLayout.Y_AXIS));
         leftPanel.setPreferredSize(new Dimension(150,70));
-        leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 10, 0, 0));
+        leftPanel.setBorder(BorderFactory.createEmptyBorder(0, 20, 0, 0));
         loadLabels();
         add(leftPanel);
     }
