@@ -2,10 +2,12 @@ package MusicClasses;
 
 import java.io.Serializable;
 import java.util.Objects;
+import java.util.UUID;
 
 public class Album extends SongList implements Serializable {
     private String artist;
     private String coverFilePath;
+    private String id = UUID.randomUUID().toString();
 
     //region Getters and setters
     /**
@@ -79,5 +81,13 @@ public class Album extends SongList implements Serializable {
     @Override
     public int hashCode() {
         return Objects.hash(artist, title);
+    }
+
+    /**
+     * Returns the album UUID. Important for HashMaps.
+     * @return album UUID
+     */
+    public String getId() {
+        return id;
     }
 }

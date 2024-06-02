@@ -3,6 +3,8 @@ package UserInterface.Panels;
 import javax.swing.*;
 import javax.swing.plaf.basic.BasicScrollBarUI;
 import java.awt.*;
+import java.awt.event.AdjustmentEvent;
+import java.awt.event.AdjustmentListener;
 
 /**
  * Represents a custom JScrollPane with the horizontal scrollbar disabled. It also contains a
@@ -100,5 +102,24 @@ public class CustomVerticalScrollPane extends JScrollPane {
             }
 
         });
+
+        verticalScrollBar.addAdjustmentListener(new AdjustmentListener() {
+            /**
+             * Repaints the target component when the scrollbar value is changed.
+             * @param e the event to be processed
+             */
+            @Override
+            public void adjustmentValueChanged(AdjustmentEvent e) {
+                repaintTarget();
+            }
+        });
+    }
+
+    /**
+     * Repaints the target component.
+     */
+    private void repaintTarget() {
+        JComponent targetComponent = (JComponent)getViewport().getView();
+        targetComponent.repaint();
     }
 }

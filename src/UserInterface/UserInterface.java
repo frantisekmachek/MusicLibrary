@@ -2,16 +2,23 @@ package UserInterface;
 
 import MusicClasses.Album;
 import MusicClasses.Song;
+import MusicClasses.SongList;
 import UserInterface.Panels.*;
 import UserInterface.Panels.Albums.AlbumSectionPanel;
 import UserInterface.Panels.SongLists.SongListContainer;
+import UserInterface.Panels.SongLists.SongListPanel;
 import UserInterface.Panels.Songs.SongSectionPanel;
 import UserInterface.Player.ControlLabels.PlayButton;
-import UserInterface.Player.PlaybackSlider;
+import UserInterface.Player.Sliders.PlaybackSlider;
+import UtilityClasses.FileLoader;
 
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  * Represents the user interface the user interacts with while using the application. There
@@ -27,10 +34,12 @@ public class UserInterface {
     private PlaybackControlPanel playbackPanel;
     private JPanel sectionChoicePanel;
     private SectionContainerPanel sectionPanel;
-    private JScrollPane sectionScrollPane;
+    private CustomVerticalScrollPane sectionScrollPane;
     private ArrayList<SectionPanel> sections = new ArrayList<>();
     private PlayButton playButton;
     private SongListContainer songListContainer;
+    private CustomVerticalScrollPane songListScrollPane;
+    private HashMap<String, SongListPanel> albumPanels = new HashMap<>();
 
     /**
      * Starts the UI.
@@ -97,6 +106,13 @@ public class UserInterface {
         window.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         window.getContentPane().setLayout(null);
 
+        try {
+            ImageIcon icon = FileLoader.loadImageFromFile("res\\icons\\disc.png");
+            window.setIconImage(icon.getImage());
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         Dimension windowSize = new Dimension(800,600);
         window.getContentPane().setPreferredSize(windowSize);
         window.pack();
@@ -157,8 +173,12 @@ public class UserInterface {
      * Loads the song list container.
      */
     private void loadSongListContainer() {
+        Dimension prefSize = new Dimension(550,530);
+        Point location = new Point(0,0);
         songListContainer = new SongListContainer();
-        rightPanel.add(songListContainer);
+        songListScrollPane = new CustomVerticalScrollPane(songListContainer, prefSize, location, 20);
+
+        rightPanel.add(songListScrollPane);
     }
 
     /**
@@ -226,9 +246,11 @@ public class UserInterface {
      * @param song the song being added
      */
     public void createSongElement(Song song) {
-        SongSectionPanel songSectionPanel = (SongSectionPanel)sections.get(0);
-        songSectionPanel.createSongPanel(song);
-        sectionPanel.resize();
+        if(sections.size() > 0) {
+            SongSectionPanel songSectionPanel = (SongSectionPanel)sections.get(0);
+            songSectionPanel.createSongPanel(song);
+            sectionPanel.resize();
+        }
     }
 
     /**
@@ -236,9 +258,11 @@ public class UserInterface {
      * @param song the song being removed
      */
     public void removeSongElement(Song song) {
-        SongSectionPanel songSectionPanel = (SongSectionPanel)sections.get(0);
-        songSectionPanel.removeSongPanel(song);
-        sectionPanel.resize();
+        if(sections.size() > 0) {
+            SongSectionPanel songSectionPanel = (SongSectionPanel)sections.get(0);
+            songSectionPanel.removeSongPanel(song);
+            sectionPanel.resize();
+        }
     }
 
     /**
@@ -283,9 +307,20 @@ public class UserInterface {
         return resizedIcon;
     }
 
-    // TODO: implement this
+    /**
+     * Opens and album on the song list panel.
+     * @param album album to be opened
+     */
     public void openAlbum(Album album) {
-
+        SongListPanel albumPanel;
+        String id = album.getId();
+        if(albumPanels.containsKey(id)) {
+            albumPanel = albumPanels.get(id);
+        } else {
+            albumPanel = new SongListPanel(album);
+            albumPanels.put(id, albumPanel);
+        }
+        songListContainer.openSongList(albumPanel);
     }
 
     /**
@@ -312,6 +347,88 @@ public class UserInterface {
      */
     public boolean isSliderAdjusting() {
         return playbackPanel.getSlider().getValueIsAdjusting();
+    }
+
+    /**
+     * Updates the playback panel labels.
+     */
+    public void updatePlaybackLabels() {
+        playbackPanel.updateLabels();
+    }
+
+    /**
+     * Removes a given song from its album panel.
+     * @param song song being removed
+     * @param album album where the song is being removed
+     */
+    public void removeSongFromAlbumPanel(Song song, Album album) {
+        SongListPanel panel = getAlbumPanel(album);
+        if(panel != null) {
+            panel.removeSong(song);
+        }
+    }
+
+    /**
+     * Adds a song to its album panel.
+     * @param song song being added
+     */
+    public void addSongToAlbumPanel(Song song) {
+        Album album = song.getAlbum();
+        SongListPanel panel = getAlbumPanel(album);
+        if(panel != null) {
+            panel.addSong(song);
+        }
+    }
+
+    /**
+     * Finds the panel belonging to an album. The panels are stored in a HashMap where the
+     * keys are the album UUID and the value is the panel.
+     * @param album album
+     * @return album panel
+     */
+    private SongListPanel getAlbumPanel(Album album) {
+        if(album != null) {
+            if(albumPanels.containsKey(album.getId())) {
+                SongListPanel panel = albumPanels.get(album.getId());
+                return panel;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Removes an album panel.
+     * @param album album whose panel is being removed
+     */
+    public void removeAlbumPanel(Album album) {
+        SongListPanel panel = getAlbumPanel(album);
+        if(panel != null) {
+            albumPanels.remove(album);
+            songListContainer.openSongList(null);
+        }
+    }
+
+    /**
+     * Updates a song panel in its album panel.
+     * @param song song being updated
+     */
+    public void updateSongInAlbumPanel(Song song) {
+        Album album = song.getAlbum();
+        SongListPanel panel = getAlbumPanel(album);
+        if(panel != null) {
+            panel.updateSong(song);
+        }
+    }
+
+    /**
+     * Updates the title in an album panel.
+     * @param album album being updated
+     */
+    public void updateTitleInAlbumPanel(Album album) {
+        SongListPanel panel = getAlbumPanel(album);
+        if(panel != null) {
+            panel.updateTitle();
+        }
     }
 
 }

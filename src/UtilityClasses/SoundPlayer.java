@@ -19,7 +19,6 @@ public class SoundPlayer {
     private Clip clip;
     private AudioInputStream sound;
     private Song currentSong;
-    private PlaybackThread thread;
     private UpdateSliderThread sliderThread = new UpdateSliderThread();
 
     /**
@@ -136,20 +135,6 @@ public class SoundPlayer {
     }
 
     /**
-     * Sets the sound playback volume.
-     * @param volume float where 0 means 0% volume and 1 means 100% volume
-     */
-    public void setVolume(float volume) {
-        FloatControl volumeControl = (FloatControl) clip.getControl(FloatControl.Type.MASTER_GAIN);
-        if(volume < 0f) {
-            volume = 0f;
-        } else if (volume > 1f) {
-            volume = 1f;
-        }
-        volumeControl.setValue(volume);
-    }
-
-    /**
      * Returns a boolean indicating whether playback is paused or not.
      * @return true if playback is paused, false otherwise
      */
@@ -157,6 +142,14 @@ public class SoundPlayer {
         return isPaused;
     }
 
+    /**
+     * Sets the current song being played. The song is added to the history if 'addToHistory' is true.
+     * If the given song is null, the playback is stopped. The playback button state is changed to the correct one.
+     * The sound is loaded on the playback slider.
+     * @param song new song being played
+     * @param addToHistory true if the song should be added to the playback history, false otherwise
+     * @throws Exception audio failed to load
+     */
     public void setCurrentSong(Song song, boolean addToHistory) throws Exception {
         this.currentSong = song;
         if(currentSong != null) {
@@ -177,32 +170,43 @@ public class SoundPlayer {
         } else {
             setSound(null);
             System.out.println("No song is being played.");
-
             UserInterface.getInstance().getPlayButton().setState(PlaybackState.STOPPED);
         }
         UserInterface.getInstance().loadSoundOnSlider();
     }
 
+    /**
+     * Returns the sound duration in milliseconds.
+     * @return sound duration in milliseconds
+     */
     public double getDurationInMilliseconds() {
         long microseconds = clip.getMicrosecondLength();
         double milliseconds = microseconds / 1000.0;
         return milliseconds;
     }
 
+    /**
+     * Returns the Clip being used.
+     * @return clip being used
+     */
     public Clip getClip() {
         return clip;
     }
 
-    public void setThread(PlaybackThread thread) {
-        this.thread = thread;
-    }
-
+    /**
+     * Sets the millisecond position of the clip.
+     * @param position new millisecond position of the clip
+     */
     public void setMillisecondPosition(int position) {
         long microsecondPosition = position * 1000L;
         pausedTime = microsecondPosition;
         clip.setMicrosecondPosition(microsecondPosition);
     }
 
+    /**
+     * Returns the current song being played.
+     * @return current song being played
+     */
     public Song getCurrentSong() {
         return currentSong;
     }

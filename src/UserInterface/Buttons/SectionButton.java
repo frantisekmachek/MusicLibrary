@@ -40,7 +40,7 @@ public class SectionButton extends CustomButton {
      * @param e mouse event
      */
     @Override
-    protected void mouseEnterAction(MouseEvent e) {
+    public void mouseEnterAction(MouseEvent e) {
         if(!selected) {
             setBackground(hoverBgColor);
         }
@@ -52,7 +52,7 @@ public class SectionButton extends CustomButton {
      * @param e mouse event
      */
     @Override
-    protected void mouseExitAction(MouseEvent e) {
+    public void mouseExitAction(MouseEvent e) {
         if(!selected) {
             setBackground(bgColor);
         }

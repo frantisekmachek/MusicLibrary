@@ -12,7 +12,6 @@ import javax.swing.*;
  * Dialog which allows the user to edit some of the album's properties.
  */
 public class AlbumDialog extends BasicDialog {
-
     private Album album;
     private AlbumPanel albumPanel;
     private JTextField albumTitleField;

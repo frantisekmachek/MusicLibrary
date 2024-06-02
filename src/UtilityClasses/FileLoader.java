@@ -1,9 +1,6 @@
 package UtilityClasses;
 
-import MusicClasses.Album;
 import MusicClasses.Library;
-import MusicClasses.Song;
-import UserInterface.UserInterface;
 
 import javax.sound.sampled.AudioInputStream;
 import javax.sound.sampled.AudioSystem;
@@ -15,9 +12,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
-import java.util.HashSet;
 import java.util.List;
 
+/**
+ * Can perform various actions related to files.
+ */
 public class FileLoader {
     /**
      * Returns the extension of a given file path.
@@ -150,18 +149,12 @@ public class FileLoader {
         // Define subdirectory paths
         String songPath = "res\\songs";
         String coverPath = "res\\covers";
-        String albumPath = "res\\albums";
-        String playlistPath = "res\\playlists";
 
         // Make sure that all subdirectories exist
         if(res.exists()) {
             createFolder(songPath);
             createFolder(coverPath);
-            createFolder(albumPath);
-            createFolder(playlistPath);
         }
-
-        createFolder(songPath + "\\songdata"); // Also create the songdata folder if it doesn't exist
     }
 
     /**
@@ -193,139 +186,22 @@ public class FileLoader {
     }
 
     /**
-     * Loads songs from the 'res\songs\songdata' directory.
-     * @return all songs in a HashSet
+     * Saves the library to the 'resources' directory.
      */
-    public static HashSet<Song> loadSongsFromResources() {
-        HashSet<Song> songs = new HashSet<>();
-        Serializer<Song> serializer = new Serializer<>();
-        String directoryPath = "res\\songs\\songdata";
-        File directory = new File(directoryPath);
-        if(directory.exists()) {
-            if(directory.isDirectory()) {
-                File[] files = directory.listFiles();
-                if(files != null) {
-                    for (File file : files) {
-                        if(file.isFile()) {
-                            Song song = serializer.deserializeObject(file.getPath());
-                            if(song != null) {
-                                songs.add(song);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return songs;
+    public static void saveLibrary() {
+        Library library = Library.getInstance();
+        String filePath = "res\\library.ser";
+        Serializer<Library> ser = new Serializer<>();
+        ser.serializeObject(library, filePath);
     }
 
     /**
-     * Extracts the file name (gets rid of the extension).
-     * @param file the file
-     * @return file name without an extension
+     * Loads the library from the resources.
+     * @return
      */
-    public static String getFileNameWithoutExtension(File file) {
-        String fileName = file.getName();
-        int lastDotIndex = fileName.lastIndexOf('.');
-        if (lastDotIndex != -1 && lastDotIndex != 0) {
-            return fileName.substring(0, lastDotIndex);
-        } else {
-            return fileName;
-        }
-    }
-
-    /**
-     * Saves a song object.
-     * @param song song object being saved
-     */
-    public static void saveSong(Song song) {
-        String dataPath = getSongDataPath(song);
-        Serializer<Song> songSer = new Serializer<>();
-        songSer.serializeObject(song, dataPath);
-    }
-
-    /**
-     * Finds a song's data file path.
-     * @param song song
-     * @return song data file path
-     */
-    private static String getSongDataPath(Song song) {
-        File songFile = new File(song.getFilePath());
-        String fileName = FileLoader.getFileNameWithoutExtension(songFile);
-        String dataFilePath = "res\\songs\\songdata\\" + fileName + ".ser";
-        return dataFilePath;
-    }
-
-    /**
-     * Removes a song from the Library as well as the files.
-     * @param song song being removed
-     */
-    public static void removeSong(Song song) {
-        File songFile = new File(song.getFilePath());
-        String dataPath = getSongDataPath(song);
-        File dataFile = new File(dataPath);
-
-        songFile.delete();
-        dataFile.delete();
-
-        Library.getInstance().removeSong(song);
-    }
-
-    /**
-     * Removes an album from the files.
-     * @param album album being removed
-     */
-    public static void removeAlbum(Album album) {
-        File albumFile = new File(album.getFilePath());
-
-        if(albumFile.exists()) {
-            albumFile.delete();
-        }
-
-        Library.getInstance().removeAlbum(album);
-    }
-
-    /**
-     * Saves an Album object. Also saves all the songs included in the album.
-     * @param album album being saved
-     */
-    public static void saveAlbum(Album album) {
-        String filePath = album.getFilePath();
-        if(filePath == null) {
-            filePath = "res\\albums\\" + album.getArtist() + "-" + album.getTitle() + ".ser";
-            album.setFilePath(filePath);
-        }
-        Serializer<Album> ser = new Serializer<>();
-        ser.serializeObject(album, filePath);
-        for(Song song : album.getSongs()) {
-            saveSong(song);
-        }
-    }
-
-    /**
-     * Loads all albums from the 'res' directory.
-     * @return HashSet of all Album objects loaded from the 'res' directory
-     */
-    public static HashSet<Album> loadAlbumsFromResources() {
-        HashSet<Album> albums = new HashSet<>();
-        Serializer<Album> serializer = new Serializer<>();
-        String directoryPath = "res\\albums";
-        File directory = new File(directoryPath);
-        if(directory.exists()) {
-            if(directory.isDirectory()) {
-                File[] files = directory.listFiles();
-                if(files != null) {
-                    for (File file : files) {
-                        if(file.isFile()) {
-                            Album album = serializer.deserializeObject(file.getPath());
-                            if(album != null) {
-                                albums.add(album);
-                            }
-                        }
-                    }
-                }
-            }
-        }
-        return albums;
+    public static Library loadLibrary() {
+        String filePath = "res\\library.ser";
+        Serializer<Library> ser = new Serializer<>();
+        return ser.deserializeObject(filePath);
     }
 }

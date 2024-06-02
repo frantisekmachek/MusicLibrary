@@ -1,4 +1,4 @@
-package UserInterface.Player;
+package UserInterface.Player.Sliders;
 
 import UtilityClasses.SoundPlayer;
 

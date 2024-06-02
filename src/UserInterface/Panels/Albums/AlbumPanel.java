@@ -81,7 +81,7 @@ public class AlbumPanel extends ItemPanel {
      * Removes the album.
      */
     protected void removeAction() {
-        FileLoader.removeAlbum(album);
+        Library.getInstance().removeAlbum(album);
     }
 
     @Override

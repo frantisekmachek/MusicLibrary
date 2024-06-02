@@ -3,7 +3,6 @@ package MusicClasses;
 import UtilityClasses.FileLoader;
 import java.io.File;
 import java.io.Serializable;
-import java.time.Duration;
 import java.util.Objects;
 
 public class Song implements Serializable {
@@ -11,7 +10,6 @@ public class Song implements Serializable {
     private String artist;
     private Album album;
     private String filePath;
-    private Duration duration;
 
     //region Getters and setters
     public Album getAlbum() {
@@ -30,15 +28,6 @@ public class Song implements Serializable {
         }
         if(album != null) {
             album.addSong(this);
-        }
-        if(album == null) {
-            if(oldAlbum == null) {
-                System.out.println("Song called " + title + " by " + artist + " was assigned no album.");
-            } else {
-                System.out.println("Song called " + title + " by " + artist + " was removed from the album called " + oldAlbum.getTitle() + " by " + oldAlbum.getArtist() + ".");
-            }
-        } else {
-            System.out.println("Song called " + title + " by " + artist + " was moved to the album called " + album.getTitle() + " by " + album.getArtist() + ".");
         }
     }
 
@@ -66,13 +55,6 @@ public class Song implements Serializable {
         this.filePath = filePath;
     }
 
-    public Duration getDuration() {
-        return duration;
-    }
-
-    public void setDuration(Duration duration) {
-        this.duration = duration;
-    }
     //endregion
 
     /**

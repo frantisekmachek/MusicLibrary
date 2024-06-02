@@ -34,27 +34,6 @@ public class PlaybackThread extends Thread {
     }
 
     /**
-     * Starts playback on the SoundPlayer.
-     */
-    public void startPlayback() {
-        player.play();
-    }
-
-    /**
-     * Pauses playback on the SoundPlayer.
-     */
-    public void pausePlayback() {
-        player.pause();
-    }
-
-    /**
-     * Resumes playback on the SoundPlayer.
-     */
-    public void resumePlayback() {
-        player.resume();
-    }
-
-    /**
      * Gets the SoundPlayer instance.
      * @return SoundPlayer instance
      */

@@ -2,59 +2,84 @@ package MusicClasses;
 
 import UserInterface.UserInterface;
 import UtilityClasses.FileLoader;
-import UtilityClasses.Serializer;
 import UtilityClasses.SoundPlayer;
 
+import javax.sound.sampled.AudioInputStream;
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedList;
-import java.util.ListIterator;
 
 /**
  * Contains all songs, albums and song lists and allows for simple manipulation
  * with those objects.
  */
-public class Library {
+public class Library implements Serializable {
     private static Library instance;
     private SongList allSongs = new SongList("All Songs");
-    private HashSet<Album> albums = new HashSet<>();
+    private ArrayList<Album> albums = new ArrayList<>();
     private HashSet<SongList> songLists = new HashSet<>();
     private LinkedList<Song> songQueue = new LinkedList<>();
     private LinkedList<Song> songHistory = new LinkedList<>();
     private int currentHistoryIndex;
 
     private Library() {
-        loadAllSongs();
-        loadAllAlbums();
     }
 
     /**
-     * Returns the singleton instance of Library. It is initialized if it doesn't exist yet.
+     * When loading the library file, it is possible that the sound file associated with the song
+     * won't be found. If that's the case, the song is removed.
+     */
+    private void legitimizeSongs() {
+        ArrayList<Song> badSongs = new ArrayList<>();
+        for(Song song : allSongs.getSongs()) {
+            String filePath = song.getFilePath();
+            try {
+                AudioInputStream sound = FileLoader.loadSoundFromFile(filePath);
+            } catch (Exception e) {
+                badSongs.add(song);
+            }
+        }
+        for(Song song : badSongs) {
+            allSongs.getSongs().remove(song);
+        }
+    }
+
+    /**
+     * When loading the library file, it is possible that some of the songs might've been removed
+     * due to not existing anymore. It is important to also remove them from their albums.
+     */
+    private void legitimizeAlbums() {
+        for(Album album : albums) {
+            ArrayList<Song> badSongs = new ArrayList<>();
+            ArrayList<Song> songs = album.getSongs();
+            for(Song song : songs) {
+                if(!allSongs.getSongs().contains(song)) {
+                    badSongs.add(song);
+                }
+            }
+            for(Song badSong : badSongs) {
+                album.getSongs().remove(badSong);
+            }
+        }
+    }
+
+    /**
+     * Returns the singleton instance of Library. It is loaded from the files, or initialized if it can't be loaded.
      * @return instance of Library
      */
     public static Library getInstance() {
         if(instance == null) {
-            instance = new Library();
+            Library loadedLibrary = FileLoader.loadLibrary();
+            if(loadedLibrary != null) {
+                loadedLibrary.legitimizeSongs();
+                loadedLibrary.legitimizeAlbums();
+                instance = loadedLibrary;
+            } else {
+                instance = new Library();
+            }
         }
         return instance;
-    }
-
-    /**
-     * Loads all songs from the resources.
-     */
-    private void loadAllSongs() {
-        HashSet<Song> songs = FileLoader.loadSongsFromResources();
-        for(Song song : songs) {
-            allSongs.addSong(song);
-        }
-    }
-
-    /**
-     * Loads all albums from the resources.
-     */
-    private void loadAllAlbums() {
-        HashSet<Album> albums = FileLoader.loadAlbumsFromResources();
-        this.albums = albums;
     }
 
     /**
@@ -66,46 +91,49 @@ public class Library {
     }
 
     /**
-     * Returns the HashSet of all albums.
-     * @return HashSet of all albums
+     * Returns the ArrayList of all albums.
+     * @return ArrayList of all albums
      */
-    public HashSet<Album> getAlbums() {
+    public ArrayList<Album> getAlbums() {
         return albums;
     }
 
     /**
-     * Adds a new song to the library as well as the files.
+     * Adds a new song to the library. Also creates the UI component for the song.
      * @param song song to be added
      */
     public void addNewSong(Song song) {
         allSongs.addSong(song);
         UserInterface.getInstance().createSongElement(song); // create UI component for song
-        FileLoader.saveSong(song);
+        FileLoader.saveLibrary();
         System.out.println("New song called " + song.getTitle() + " by " + song.getArtist() + " was imported.");
     }
 
     /**
      * Removes a song from the library as well as the files.
+     * Also removes the song UI element and removes the song from its album panel.
       * @param song song to be removed
      */
     public void removeSong(Song song) {
         allSongs.removeSong(song);
         UserInterface.getInstance().removeSongElement(song);
-        System.out.println("Song called " + song.getTitle() + " by " + song.getArtist() + " was removed.");
+        UserInterface.getInstance().removeSongFromAlbumPanel(song, song.getAlbum());
         removeSongFromQueue(song);
         try {
             SoundPlayer.getInstance().setCurrentSong(null, false);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        System.out.println("Song called " + song.getTitle() + " by " + song.getArtist() + " was removed.");
     }
 
     /**
-     * Saves the song via the FileLoader class.
+     * Saves the library and updates the song on its album panel.
      * @param song song to be saved
      */
     public void updateSong(Song song) {
-        FileLoader.saveSong(song);
+        FileLoader.saveLibrary();
+        UserInterface.getInstance().updateSongInAlbumPanel(song);
     }
 
     /**
@@ -144,20 +172,23 @@ public class Library {
     }
 
     /**
-     * Removes an album from the library as well as the files.
+     * Removes an album from the library. Also removes its UI elements.
      * @param album the album to be removed
      */
     public void removeAlbum(Album album) {
         if(albums.contains(album)) {
             albums.remove(album);
             UserInterface.getInstance().removeAlbumElement(album);
+            UserInterface.getInstance().removeAlbumPanel(album);
             removeSongsFromAlbum(album);
             System.out.println("Album called " + album.getTitle() + " by " + album.getArtist() + " was removed.");
+        } else {
+            System.out.println("Album doesn't exist.");
         }
     }
 
     /**
-     * Removes all songs from an album.
+     * Removes all songs from an album. Also updates the songs' covers to the default.
      * @param album album
      */
     private void removeSongsFromAlbum(Album album) {
@@ -165,7 +196,7 @@ public class Library {
             if(song.getAlbum() != null) {
                 if(song.getAlbum().equals(album)) {
                     song.setAlbum(null);
-                    FileLoader.saveSong(song);
+                    FileLoader.saveLibrary();
                     UserInterface.getInstance().updateSongCovers(null);
                 }
             }
@@ -173,14 +204,14 @@ public class Library {
     }
 
     /**
-     * Adds an album to the library and saves it in a file.
+     * Adds an album to the library and the library is saved. Also creates the album UI element.
      * @param album the new album
      */
     public void addAlbum(Album album) throws Exception {
         if(!albums.contains(album)) {
             albums.add(album);
             UserInterface.getInstance().createAlbumElement(album);
-            FileLoader.saveAlbum(album);
+            FileLoader.saveLibrary();
             System.out.println("New album called " + album.getTitle() + " by " + album.getArtist() + " was created.");
         } else {
             throw new Exception("Album couldn't be created, because it already exists.");
@@ -188,15 +219,16 @@ public class Library {
     }
 
     /**
-     * Saves the album via the FileLoader class.
-     * @param album album to be saved
+     * Updates the title in the album panel. Also saves the library.
+     * @param album album to be updated
      */
     public void updateAlbum(Album album) {
-        FileLoader.saveAlbum(album);
+        FileLoader.saveLibrary();
+        UserInterface.getInstance().updateTitleInAlbumPanel(album);
     }
 
     /**
-     * Adds a song to the queue to be played later.
+     * Adds a song to the queue so it can be played later.
      * @param song song being added to the queue
      */
     public void addSongToQueue(Song song) {
@@ -245,27 +277,18 @@ public class Library {
     public void addSongToHistory(Song song) {
         if(allSongs.getSongs().contains(song)) {
             if(songHistory.contains(song)) {
-                System.out.println("History already contains " + song.getTitle());
                 clearHistory();
             }
             songHistory.addLast(song);
             int size = songHistory.size();
             currentHistoryIndex = size - 1;
-            System.out.println("Added " + song.getTitle() + " to history");
         }
-        // Print song history in the console
-        System.out.print("Song history: ");
-        for(Song hSong : songHistory) {
-            System.out.print(hSong.getArtist() + " - " + hSong.getTitle() + "; ");
-        }
-        System.out.println("");
     }
 
     /**
      * Clears the playback history.
      */
     public void clearHistory() {
-        System.out.println("Clearing history...");
         songHistory.clear();
         currentHistoryIndex = 0;
     }

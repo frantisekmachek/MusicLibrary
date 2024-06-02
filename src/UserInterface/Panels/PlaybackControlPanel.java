@@ -4,7 +4,7 @@ import MusicClasses.Song;
 import UserInterface.Player.ControlLabels.BackwardButton;
 import UserInterface.Player.ControlLabels.ForwardButton;
 import UserInterface.Player.ControlLabels.PlayButton;
-import UserInterface.Player.PlaybackSlider;
+import UserInterface.Player.Sliders.PlaybackSlider;
 import UtilityClasses.SoundPlayer;
 
 import javax.swing.*;
@@ -90,6 +90,7 @@ public class PlaybackControlPanel extends JPanel {
         rightPanel = new JPanel();
         rightPanel.setBackground(new Color(0,0,0,0));
         rightPanel.setPreferredSize(new Dimension(150,70));
+
         add(rightPanel);
     }
 
@@ -164,6 +165,7 @@ public class PlaybackControlPanel extends JPanel {
                 songTitleLabel.setVisible(false);
                 artistLabel.setVisible(false);
             }
+            repaint();
         } catch (Exception e) {
             e.printStackTrace();
         }

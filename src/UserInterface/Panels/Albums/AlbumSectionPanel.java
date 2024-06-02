@@ -3,11 +3,10 @@ package UserInterface.Panels.Albums;
 import MusicClasses.Album;
 import MusicClasses.Library;
 import UserInterface.Buttons.CreateAlbumButton;
-import UserInterface.Buttons.ImportButton;
 import UserInterface.Panels.SectionPanel;
 
 import java.awt.*;
-import java.util.HashSet;
+import java.util.ArrayList;
 
 public class AlbumSectionPanel extends SectionPanel {
 
@@ -29,7 +28,7 @@ public class AlbumSectionPanel extends SectionPanel {
      * Loads panels for all albums.
      */
     private void loadAlbums() {
-        HashSet<Album> albums = Library.getInstance().getAlbums();
+        ArrayList<Album> albums = Library.getInstance().getAlbums();
         if(albums.size() > 0) {
             for(Album album : albums) {
                 createAlbumPanel(album);

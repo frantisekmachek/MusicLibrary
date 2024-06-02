@@ -1,5 +1,8 @@
 package MusicClasses;
 
+import UserInterface.UserInterface;
+import UtilityClasses.FileLoader;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -55,6 +58,10 @@ public class SongList implements Serializable {
     public boolean addSong(Song song) {
         if(!songs.contains(song)) {
             songs.add(song);
+            FileLoader.saveLibrary();
+            if(this instanceof Album) {
+                UserInterface.getInstance().addSongToAlbumPanel(song);
+            }
             return true;
         } else {
             return false;
@@ -69,6 +76,11 @@ public class SongList implements Serializable {
     public boolean removeSong(Song song) {
         if(songs.contains(song)) {
             songs.remove(song);
+            if(this instanceof Album) {
+                FileLoader.saveLibrary();
+                // Remove the song from this album
+                UserInterface.getInstance().removeSongFromAlbumPanel(song, (Album)this);
+            }
             return true;
         } else {
             return false;

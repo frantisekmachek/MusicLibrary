@@ -68,6 +68,7 @@ public class SongDialog extends BasicDialog {
 
             songPanel.updateCover(album);
             songPanel.updateLabels(title, artist);
+            UserInterface.getInstance().updatePlaybackLabels();
             Library.getInstance().updateSong(song);
         } else {
             try {

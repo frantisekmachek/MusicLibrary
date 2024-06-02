@@ -108,7 +108,7 @@ public class SongPanel extends ItemPanel {
      * Removes the song.
      */
     protected void removeAction() {
-        FileLoader.removeSong(song);
+        Library.getInstance().removeSong(song);
     }
 
     @Override
@@ -120,16 +120,18 @@ public class SongPanel extends ItemPanel {
         }
     }
 
+    /**
+     * Adds some extra popup options on the popup menu.
+     */
     private void addExtraPopupOptions() {
         JMenuItem addToQueue = new JMenuItem("Add to queue");
         popupMenu.add(addToQueue);
-        // Add later with functionality:
-        // popupMenu.add(addSong);
-        // popupMenu.add(removeSong);
-
         addToQueue.addActionListener(e -> addToQueue());
     }
 
+    /**
+     * Adds the song belonging to this panel to the queue.
+     */
     private void addToQueue() {
         Library.getInstance().addSongToQueue(song);
     }
